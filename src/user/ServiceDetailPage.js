@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaStar } from "react-icons/fa";
-import axios from "axios";
+import { getServiceById, getAllBookings } from "../services/api"; // ← Firebase
 import "../style/Navbar.css";
 
-/* ── Star display helper ── */
 const StarDisplay = ({ value, size = "md" }) => (
   <div className={`sd-stars sd-stars--${size}`}>
     {[1, 2, 3, 4, 5].map((s) => (
-      <FaStar
-        key={s}
-        style={{ color: s <= Math.round(value) ? "#f59e0b" : "#d1d5db" }}
-      />
+      <FaStar key={s} style={{ color: s <= Math.round(value) ? "#f59e0b" : "#d1d5db" }} />
     ))}
   </div>
 );
 
 export default function ServiceDetailsPage() {
-  const { state } = useLocation();
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { state }  = useLocation();
+  const { id }     = useParams();
+  const navigate   = useNavigate();
 
   const [service,     setService]     = useState(state?.service || null);
   const [loading,     setLoading]     = useState(!state?.service);
@@ -28,17 +24,18 @@ export default function ServiceDetailsPage() {
   const [ratingStats, setRatingStats] = useState({ avg: 0, count: 0, dist: [] });
 
   useEffect(() => {
-    if (!service && id) fetchServiceById();
+    if (!service && id) fetchServiceById_();
   }, [id]);
 
   useEffect(() => {
     if (service) fetchReviews(service.title);
   }, [service]);
 
-  const fetchServiceById = async () => {
+  const fetchServiceById_ = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/services/${id}`);
-      setService(res.data);
+      const data = await getServiceById(id); // ← Firebase
+      if (data) setService(data);
+      else setError("Service not found.");
     } catch (err) {
       console.error(err);
       setError("Service not found.");
@@ -49,8 +46,8 @@ export default function ServiceDetailsPage() {
 
   const fetchReviews = async (title) => {
     try {
-      const res = await axios.get("http://localhost:5000/bookings");
-      const rated = res.data.filter((b) => b.rating && b.serviceTitle === title);
+      const allBookings = await getAllBookings(); // ← Firebase
+      const rated = allBookings.filter((b) => b.rating && b.serviceTitle === title);
       if (rated.length === 0) { setReviews([]); return; }
 
       const avg  = rated.reduce((s, b) => s + Number(b.rating), 0) / rated.length;
@@ -59,7 +56,6 @@ export default function ServiceDetailsPage() {
         count: rated.filter((b) => Number(b.rating) === star).length,
       }));
 
-      // Sort: feedback-first, then by date descending
       const sorted = [...rated].sort((a, b) => {
         if (a.feedback && !b.feedback) return -1;
         if (!a.feedback && b.feedback) return 1;
@@ -103,24 +99,18 @@ export default function ServiceDetailsPage() {
     <div className="sd-page">
       <div className="sd-container">
 
-        {/* ── Back button ── */}
         <button className="sd-back" onClick={() => navigate(-1)}>← Back</button>
 
-        {/* ── Main Card ── */}
         <div className="sd-card">
-
-          {/* Image column */}
           <div className="sd-card__image">
             <img src={service.image} alt={service.title} className="sd-card__img" />
             <div className="sd-card__img-badge">🐾 Professional Grooming</div>
           </div>
 
-          {/* Info column */}
           <div className="sd-card__info">
             <span className="sd-card__tag">Service Details</span>
             <h2 className="sd-card__title">{service.title}</h2>
 
-            {/* Inline rating summary */}
             {ratingStats.count > 0 ? (
               <div className="sd-rating-summary">
                 <span className="sd-rating-summary__avg">{ratingStats.avg.toFixed(1)}</span>
@@ -141,8 +131,7 @@ export default function ServiceDetailsPage() {
                 <ul className="sd-includes__list">
                   {service.hygieneIncludes.map((item, idx) => (
                     <li key={idx} className="sd-includes__item">
-                      <span className="sd-includes__dot" />
-                      {item}
+                      <span className="sd-includes__dot" />{item}
                     </li>
                   ))}
                 </ul>
@@ -151,16 +140,12 @@ export default function ServiceDetailsPage() {
 
             <div className="sd-card__price">₱{service.price}</div>
 
-            <button
-              className="sd-btn-book"
-              onClick={() => navigate("../bookings", { state: { service } })}
-            >
+            <button className="sd-btn-book" onClick={() => navigate("../bookings", { state: { service } })}>
               Book This Service 🐾
             </button>
           </div>
         </div>
 
-        {/* ── Notes & Policy ── */}
         <div className="sd-footer">
           {service.notes?.length > 0 && (
             <div className="sd-notes">
@@ -177,12 +162,10 @@ export default function ServiceDetailsPage() {
           )}
         </div>
 
-        {/* ── Customer Reviews Section ── */}
         {reviews.length > 0 && (
           <div className="sd-reviews">
             <h4 className="sd-reviews__heading">⭐ Customer Reviews</h4>
 
-            {/* Distribution overview */}
             <div className="sd-reviews__overview">
               <div className="sd-reviews__big-avg">
                 <span className="sd-reviews__avg-num">{ratingStats.avg.toFixed(1)}</span>
@@ -199,13 +182,8 @@ export default function ServiceDetailsPage() {
                     <div key={star} className="sd-reviews__dist-row">
                       <span className="sd-reviews__dist-label">{star} ★</span>
                       <div className="sd-reviews__dist-track">
-                        <div
-                          className="sd-reviews__dist-fill"
-                          style={{
-                            width: `${pct}%`,
-                            background: star >= 4 ? "#f59e0b" : star === 3 ? "#fb923c" : "#ef4444",
-                          }}
-                        />
+                        <div className="sd-reviews__dist-fill"
+                          style={{ width: `${pct}%`, background: star >= 4 ? "#f59e0b" : star === 3 ? "#fb923c" : "#ef4444" }} />
                       </div>
                       <span className="sd-reviews__dist-count">{count}</span>
                     </div>
@@ -214,18 +192,11 @@ export default function ServiceDetailsPage() {
               </div>
             </div>
 
-            {/* ── Individual review cards ── */}
             <div className="sd-reviews__list">
               {reviews.slice(0, 6).map((b) => (
-                <div
-                  key={b.id}
-                  className={`sd-review-card${b.feedback?.trim() ? " sd-review-card--has-feedback" : ""}`}
-                >
-                  {/* Header row */}
+                <div key={b.id} className={`sd-review-card${b.feedback?.trim() ? " sd-review-card--has-feedback" : ""}`}>
                   <div className="sd-review-card__top">
-                    <div className="sd-review-card__avatar">
-                      {b.fullName?.[0]?.toUpperCase() || "?"}
-                    </div>
+                    <div className="sd-review-card__avatar">{b.fullName?.[0]?.toUpperCase() || "?"}</div>
                     <div className="sd-review-card__meta">
                       <p className="sd-review-card__name">{b.fullName}</p>
                       <p className="sd-review-card__pet">🐾 {b.petName} · {b.species}</p>
@@ -235,15 +206,12 @@ export default function ServiceDetailsPage() {
                       <span className="sd-review-card__date">{formatDate(b.date)}</span>
                     </div>
                   </div>
-
-                  {/* ✅ Optional feedback text */}
                   {b.feedback?.trim() && (
                     <p className="sd-review-card__feedback">"{b.feedback}"</p>
                   )}
                 </div>
               ))}
             </div>
-
           </div>
         )}
 

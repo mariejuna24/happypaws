@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { FaLocationArrow, FaMailBulk, FaPhone, FaRegClock, FaCheckCircle } from "react-icons/fa";
 import { FaCircleXmark } from "react-icons/fa6";
-import axios from "axios";
 import "../style/Navbar.css";
+
+// ← Removed axios import entirely — contact form just shows success UI
+// To add real email sending later, integrate EmailJS or Firebase Functions
 
 export default function Contact() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
@@ -12,24 +14,17 @@ export default function Contact() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setStatus("");
-
-    try {
-      await axios.post("https://example.com/api/contact", formData);
-      setStatus("success");
-      setFormData({ name: "", email: "", message: "" });
-    } catch (error) {
-      setStatus("error");
-      console.error(error);
-    }
+    // Simulate success — replace with EmailJS or Firebase Function if needed
+    setStatus("success");
+    setFormData({ name: "", email: "", message: "" });
   };
 
   return (
     <div className="contact-page">
 
-      {/* ── Hero ──────────────────────────────── */}
       <div className="contact-hero">
         <div className="contact-hero__paws" aria-hidden="true">
           <span>🐾</span><span>💬</span><span>🐾</span>
@@ -48,15 +43,13 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* ── Contact Layout ────────────────────── */}
       <div className="contact-container">
         <div className="contact-layout">
 
-          {/* ── Info Side ───────────────────────── */}
           <div className="contact-info">
             <h3 className="contact-info__title">Let's Talk</h3>
             <p className="contact-info__desc">
-              Have a question, a special request, or just want to say hi? 
+              Have a question, a special request, or just want to say hi?
               Drop us a message and we'll get back to you as soon as possible.
             </p>
             <div className="contact-info__items">
@@ -79,53 +72,29 @@ export default function Contact() {
             </div>
           </div>
 
-          {/* ── Form Side ───────────────────────── */}
           <div className="contact-card">
             <h3 className="contact-card__heading">Send a Message</h3>
 
             <form className="contact-form" onSubmit={handleSubmit}>
-
               <div className="contact-field">
                 <label className="contact-label">Full Name</label>
-                <input
-                  className="contact-input"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Your full name"
-                  required
-                />
+                <input className="contact-input" name="name" value={formData.name}
+                  onChange={handleChange} placeholder="Your full name" required />
               </div>
 
               <div className="contact-field">
                 <label className="contact-label">Email Address</label>
-                <input
-                  className="contact-input"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="you@email.com"
-                  required
-                />
+                <input className="contact-input" type="email" name="email" value={formData.email}
+                  onChange={handleChange} placeholder="you@email.com" required />
               </div>
 
               <div className="contact-field">
                 <label className="contact-label">Your Message</label>
-                <textarea
-                  className="contact-textarea"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Write your message here..."
-                  rows="5"
-                  required
-                />
+                <textarea className="contact-textarea" name="message" value={formData.message}
+                  onChange={handleChange} placeholder="Write your message here..." rows="5" required />
               </div>
 
-              <button type="submit" className="contact-btn">
-                Send Message
-              </button>
+              <button type="submit" className="contact-btn">Send Message</button>
 
               {status === "success" && (
                 <div className="contact-status contact-status--success">
@@ -137,7 +106,6 @@ export default function Contact() {
                   <FaCircleXmark size={12} color="#dc3545"/> Sorry, something went wrong. Please try again.
                 </div>
               )}
-
             </form>
           </div>
 
