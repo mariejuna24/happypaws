@@ -71,7 +71,7 @@ export const createBooking = async (bookingData) => {
   const ref = await addDoc(collection(db, "bookings"), {
     ...bookingData,
     userId: user ? user.uid : null,
-    status: "Confirmed",
+    status: "Pending", // ← always Pending, admin confirms manually
   });
   return { id: ref.id, ...bookingData };
 };

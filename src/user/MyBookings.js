@@ -20,7 +20,6 @@ export default function MyBookings() {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        // ← Firebase: use uid instead of id
         const data = await getBookingsByUser(loggedUser.uid);
         const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
         setBookings(sorted);
@@ -31,6 +30,7 @@ export default function MyBookings() {
       }
     };
     fetchBookings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -81,16 +81,14 @@ export default function MyBookings() {
     const star     = pendingRating[bookingId];
     const feedback = (feedbackText[bookingId] || "").trim();
     if (!star) return;
-
     setSubmittingRating(bookingId);
     try {
-      // ← Firebase: use updateBookingRating from api.js
       await updateBookingRating(bookingId, star, feedback || null);
       setBookings(prev =>
         prev.map(b => b.id === bookingId ? { ...b, rating: star, feedback: feedback || null } : b)
       );
-      setPendingRating(p  => { const n = { ...p };  delete n[bookingId]; return n; });
-      setFeedbackText(p   => { const n = { ...p };  delete n[bookingId]; return n; });
+      setPendingRating(p  => { const n = { ...p }; delete n[bookingId]; return n; });
+      setFeedbackText(p   => { const n = { ...p }; delete n[bookingId]; return n; });
     } catch (err) {
       console.error("Failed to submit rating:", err);
     } finally {
@@ -121,11 +119,11 @@ export default function MyBookings() {
           <div className="mb-banner">
             <div className="mb-banner__icon">🎉</div>
             <div className="mb-banner__body">
-              <p className="mb-banner__title">Booking Confirmed!</p>
+              <p className="mb-banner__title">Booking Submitted!</p>
               <p className="mb-banner__sub">
                 Your reference number is&nbsp;
                 <strong className="mb-banner__ref">{newRefNumber}</strong>.
-                Please keep this for your records.
+                Please wait for admin confirmation.
               </p>
             </div>
             <button className="mb-banner__close" onClick={() => setShowBanner(false)}>✕</button>
@@ -154,7 +152,6 @@ export default function MyBookings() {
                 </span>
               )}
             </button>
-
             <button
               className={`mb-tab${activeTab === "history" ? " mb-tab--active mb-tab--history" : ""}`}
               onClick={() => setActiveTab("history")}
@@ -216,7 +213,9 @@ export default function MyBookings() {
 
                   <div className="mb-card__top">
                     <div className="mb-card__service-wrap">
-                      <div className="mb-card__service-icon">{isHistory ? <FaBrush size={20} color="#7a4419"/> : <FaDog size={20} color="#7a4419"/>}</div>
+                      <div className="mb-card__service-icon">
+                        {isHistory ? <FaBrush size={20} color="#7a4419"/> : <FaDog size={20} color="#7a4419"/>}
+                      </div>
                       <div>
                         <p className="mb-card__service-title">{booking.serviceTitle}</p>
                         {petList.length > 1 ? (
@@ -258,7 +257,6 @@ export default function MyBookings() {
                         <span className="mb-card__time">at {formatTime(booking.time)}</span>
                       </span>
                     </div>
-
                     {booking.addOns?.length > 0 && (
                       <div className="mb-card__info-row mb-card__info-row--addons">
                         <span className="mb-card__info-label"> Add-ons</span>
@@ -281,7 +279,6 @@ export default function MyBookings() {
                   {isSuccess && (
                     <div className="mb-card__rating">
                       <div className="mb-card__divider mb-card__divider--dashed" style={{ margin: "0.75rem 0" }} />
-
                       {booking.rating ? (
                         <div className="mb-rating__done">
                           <div className="mb-rating__done-top">
@@ -316,7 +313,6 @@ export default function MyBookings() {
                               />
                             ))}
                           </div>
-
                           {chosen && (
                             <div className="mb-feedback">
                               <label className="mb-feedback__label">
