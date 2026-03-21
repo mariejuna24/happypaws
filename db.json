@@ -1,0 +1,159 @@
+{
+  "services": [
+    {
+      "id": "2",
+      "title": "BASIC HYGIENE GROOMING",
+      "desc": "Nail trimming, ear cleaning, and sanitary area care.",
+      "price": 300,
+      "image": "https://dl.dropbox.com/scl/fi/qxpou47dkypxp1p42ayyp/Creating-A-Dental-Routine-For-Your-Dog_-Step-By-Step-Guide.jpg?rlkey=qh7olct448n6cpyoyvqr74cuz&st=ahkapw50&dl=0",
+      "fullDescription": "Basic hygiene grooming keeps your pet fresh and healthy with essential cleaning and trimming services.",
+      "hygieneIncludes": [
+        "Nail Trimming",
+        "Ear Cleaning",
+        "Sanitary Area Care"
+      ],
+      "notes": [
+        "Duration depends on pet behavior.",
+        "Prices include 12% VAT.",
+        "Prices may change without prior notice."
+      ],
+      "c": "Cancellation within 8 hours of appointment will incur a fee equal to the service rate."
+    },
+    {
+      "id": "3",
+      "title": "BASIC FULL GROOMING",
+      "desc": "Full-body trim for a neat and stylish look.",
+      "price": 450,
+      "image": "https://dl.dropbox.com/scl/fi/cd2tgx2xnj0brdfn64idp/What-is-pet-hygiene_.jpg?rlkey=42mjym4fr6hnwex09dvlzd551&st=97sogkfp&dl=0",
+      "fullDescription": "Full grooming service including bath, haircut, and finishing touches to give your pet a clean and stylish appearance.",
+      "hygieneIncludes": [
+        "Bath and Blow Dry",
+        "Haircut / Full Trim",
+        "Nail Trimming",
+        "Ear Cleaning"
+      ],
+      "notes": [
+        "Service time may vary based on coat condition.",
+        "VAT included.",
+        "Prices subject to change."
+      ],
+      "cancellationPolicy": "No-shows or late cancellations (less than 8 hours) will be charged full service rate."
+    },
+    {
+      "id": "4",
+      "title": "CUSTOM HAIRCUT FULL GROOMING",
+      "desc": "Custom haircut tailored to your pet's style.",
+      "price": 520,
+      "image": "https://dl.dropbox.com/scl/fi/ulqwwja1n7neibe3ip4u3/Grooming-Services-for-Pets.jpg?rlkey=o65uis4g1dc14qieix4aclsap&st=so8st9mh&dl=0",
+      "fullDescription": "Premium full grooming with a customized haircut designed according to your pet's breed and your styling preference.",
+      "hygieneIncludes": [
+        "Luxury Bath",
+        "Custom Haircut Styling",
+        "Blow Dry and Finish",
+        "Nail & Ear Care"
+      ],
+      "notes": [
+        "May take longer depending on haircut complexity.",
+        "Prices include VAT.",
+        "Subject to change."
+      ],
+      "cancellationPolicy": "Late cancellations or no-shows will be charged the full booked service rate."
+    }
+  ],
+  "users": [
+    {
+      "id": "003b",
+      "name": "juna",
+      "email": "mj@gmail.com",
+      "password": "123"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "a0b2",
+      "serviceId": "2",
+      "serviceTitle": "BASIC HYGIENE GROOMING",
+      "servicePrice": 300,
+      "fullName": "Marie Juna Baturi",
+      "phone": "09456128163",
+      "email": "mariejuna0924@gmail.com",
+      "petName": "Bruno",
+      "species": "Dog",
+      "date": "2026-03-10",
+      "time": "08:30",
+      "addOns": [
+        {
+          "id": 1,
+          "name": "Anal Sac Gland Expression",
+          "price": 350
+        },
+        {
+          "id": 2,
+          "name": "Ear Cleaning / Plucking",
+          "price": 350
+        },
+        {
+          "id": 3,
+          "name": "PAWdicure (Nail Clip & File)",
+          "price": 350
+        },
+        {
+          "id": 4,
+          "name": "Teeth Cleaning",
+          "price": 350
+        }
+      ],
+      "totalPrice": 1700,
+      "status": "Cancelled",
+      "refNumber": "BK-MMFRTPBC-5PVR"
+    },
+    {
+      "id": "ae08",
+      "serviceId": "3",
+      "serviceTitle": "BASIC FULL GROOMING",
+      "servicePrice": 450,
+      "fullName": "Marie Juna Baturi",
+      "phone": "09456128163",
+      "email": "mariejuna0924@gmail.com",
+      "petName": "Bruno",
+      "species": "Dog",
+      "date": "2026-03-11",
+      "time": "11:29",
+      "addOns": [],
+      "totalPrice": 450,
+      "status": "Success",
+      "refNumber": "BK-MMFS83F9-KLHB",
+      "rating": 5,
+      "feedback": "Good"
+    },
+    {
+      "id": "a8c5",
+      "serviceId": "2",
+      "serviceTitle": "BASIC HYGIENE GROOMING",
+      "servicePrice": 300,
+      "fullName": "Marie Juna Baturi",
+      "phone": "09456128163",
+      "email": "mariejuna0924@gmail.com",
+      "date": "2026-03-30",
+      "time": "12:12",
+      "addOns": [],
+      "petName": "Bruno",
+      "species": "Dog",
+      "pets": [
+        {
+          "id": 1772856745319.0913,
+          "petName": "Bruno",
+          "species": "Dog"
+        },
+        {
+          "id": 1772856766984.62,
+          "petName": "Panter",
+          "species": "Cat"
+        }
+      ],
+      "totalPrice": 600,
+      "status": "Confirmed",
+      "refNumber": "BK-MMFT5TDT-QOM2"
+    }
+  ]
+}

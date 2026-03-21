@@ -1,0 +1,153 @@
+@use '../styles/variables' as v;
+@use '../styles/mixins' as m;
+
+.login-page {
+  @include m.flex-center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #fdf2e9 0%, #ffe5d0 100%);
+  font-family: v.$font-body;
+  padding: v.$space-md;
+}
+
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: v.$radius-lg;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  padding: v.$space-2xl v.$space-xl;
+}
+
+.login-back-btn {
+  @include m.flex-center;
+  @include m.transition(background, transform);
+  position: absolute;
+  top: v.$space-md;
+  left: v.$space-md;
+  width: 36px;
+  height: 36px;
+  border-radius: v.$radius-full;
+  background: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  color: #555;
+
+  &:hover {
+    background: #ebebeb;
+    transform: scale(1.08);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.login-header {
+  @include m.flex-col(v.$space-xs);
+  align-items: center;
+  text-align: center;
+  margin-bottom: v.$space-xl;
+  margin-top: v.$space-xs;
+
+  &__icon {
+    color: v.$color-accent;
+    margin-bottom: v.$space-xs;
+  }
+
+  &__title {
+    font-family: v.$font-display;
+    font-size: v.$font-size-xl;
+    font-weight: 700;
+    color: v.$color-accent;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  &__subtitle {
+    font-size: v.$font-size-sm;
+    color: #777;
+    margin: 0;
+  }
+}
+
+.login-form {
+  @include m.flex-col(v.$space-md);
+}
+
+.login-field {
+  @include m.flex-col(6px);
+
+  &__label {
+    font-size: v.$font-size-sm;
+    font-weight: 600;
+    color: #333;
+  }
+
+  &__input {
+    @include m.transition(border-color, box-shadow);
+    width: 100%;
+    padding: 0.6rem v.$space-md;
+    border: 1.5px solid #e0e0e0;
+    border-radius: v.$radius-sm;
+    font-size: v.$font-size-base;
+    font-family: v.$font-body;
+    color: #333;
+    outline: none;
+    background: #fff;
+
+    &::placeholder {
+      color: #bbb;
+    }
+
+    &:focus {
+      border-color: v.$color-accent;
+      box-shadow: 0 0 0 3px rgba(v.$color-accent, 0.12);
+    }
+  }
+}
+
+.login-submit-btn {
+  @include m.flex-center;
+  @include m.transition(background, transform, box-shadow);
+  width: 100%;
+  padding: 0.7rem;
+  background: v.$color-accent;
+  color: #fff;
+  border: none;
+  border-radius: v.$radius-sm;
+  font-family: v.$font-display;
+  font-size: v.$font-size-base;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  margin-top: v.$space-xs;
+
+  &:hover {
+    background: v.$color-accent-light;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(v.$color-accent, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+    background: v.$color-accent-dark;
+  }
+}
+
+.login-footer {
+  text-align: center;
+  font-size: v.$font-size-sm;
+  color: #777;
+  margin-top: v.$space-xs;
+
+  &__link {
+    color: v.$color-accent;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

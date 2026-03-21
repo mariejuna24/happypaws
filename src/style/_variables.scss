@@ -1,0 +1,48 @@
+$color-accent:        #e8712a;
+$color-accent-light:  #f58c4a;
+$color-accent-dark:   #c45d1a;
+
+$color-bg:            #0f0f13;
+$color-surface:       #1a1a22;
+$color-surface-hover: #22222e;
+$color-border:        rgba(255, 255, 255, 0.07);
+
+$color-text-primary:  #f0f0f5;
+$color-text-secondary:#9a9ab0;
+$color-text-muted:    #5a5a72;
+
+$color-logout-bg:     rgba(232, 113, 42, 0.08);
+$color-logout-hover:  rgba(232, 113, 42, 0.15);
+
+$font-display:        'Sora', sans-serif;
+$font-body:           'DM Sans', sans-serif;
+
+$font-size-xs:        0.72rem;
+$font-size-sm:        0.875rem;
+$font-size-base:      1rem;
+$font-size-lg:        1.125rem;
+$font-size-xl:        1.5rem;
+$font-size-2xl:       2rem;
+
+$space-xs:   0.375rem;
+$space-sm:   0.75rem;
+$space-md:   1rem;
+$space-lg:   1.5rem;
+$space-xl:   2rem;
+$space-2xl:  3rem;
+
+$radius-sm:   8px;
+$radius-md:   14px;
+$radius-lg:   20px;
+$radius-full: 9999px;
+
+$shadow-card:   0 8px 32px rgba(0, 0, 0, 0.45);
+$shadow-avatar: 0 0 0 4px rgba(232, 113, 42, 0.25), 0 8px 24px rgba(232, 113, 42, 0.15);
+$shadow-btn:    0 4px 16px rgba(232, 113, 42, 0.12);
+
+$transition-fast:   0.15s ease;
+$transition-base:   0.25s ease;
+$transition-slow:   0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+$wrapper-max-width: 860px;
+$identity-width:    260px;
