@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaCalendarAlt, FaBrush, FaDog, FaPaw, FaStar } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { getBookingsByUser, updateBookingRating } from "../services/api";
 import "../style/Navbar.css";
 
 export default function MyBookings() {
@@ -20,10 +20,9 @@ export default function MyBookings() {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/bookings?userId=${loggedUser.id}`
-        );
-        const sorted = res.data.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // ← Firebase: use uid instead of id
+        const data = await getBookingsByUser(loggedUser.uid);
+        const sorted = data.sort((a, b) => new Date(b.date) - new Date(a.date));
         setBookings(sorted);
       } catch (err) {
         console.error("Failed to fetch bookings:", err);
@@ -67,7 +66,6 @@ export default function MyBookings() {
     return `${hour}:${String(m).padStart(2, "0")} ${suffix}`;
   };
 
-  /* ── Rating & Feedback state ── */
   const [hoveredRating,    setHoveredRating]    = useState({});
   const [pendingRating,    setPendingRating]     = useState({});
   const [feedbackText,     setFeedbackText]      = useState({});
@@ -86,10 +84,8 @@ export default function MyBookings() {
 
     setSubmittingRating(bookingId);
     try {
-      await axios.patch(`http://localhost:5000/bookings/${bookingId}`, {
-        rating:   star,
-        feedback: feedback || null,
-      });
+      // ← Firebase: use updateBookingRating from api.js
+      await updateBookingRating(bookingId, star, feedback || null);
       setBookings(prev =>
         prev.map(b => b.id === bookingId ? { ...b, rating: star, feedback: feedback || null } : b)
       );
@@ -111,7 +107,6 @@ export default function MyBookings() {
 
   const displayed = activeTab === "current" ? currentBookings : historyBookings;
 
-  /* ── helper: resolve pet list from booking ── */
   const getPets = (booking) => {
     if (booking.pets?.length > 0) return booking.pets;
     if (booking.petName) return [{ id: 1, petName: booking.petName, species: booking.species || "" }];
@@ -122,7 +117,6 @@ export default function MyBookings() {
     <div className="mb-page">
       <div className="mb-container">
 
-        {/* ── Confirmation Banner ── */}
         {showBanner && newRefNumber && (
           <div className="mb-banner">
             <div className="mb-banner__icon">🎉</div>
@@ -138,7 +132,6 @@ export default function MyBookings() {
           </div>
         )}
 
-        {/* ── Page Heading ── */}
         <div className="mb-heading">
           <div className="mb-heading__icon"><FaPaw color="#7a4419"/></div>
           <div>
@@ -147,7 +140,6 @@ export default function MyBookings() {
           </div>
         </div>
 
-        {/* ── Tabs ── */}
         {!loading && (
           <div className="mb-tabs">
             <button
@@ -178,7 +170,6 @@ export default function MyBookings() {
           </div>
         )}
 
-        {/* ── Content ── */}
         {loading ? (
           <div className="mb-loading">
             <div className="mb-spinner" />
@@ -189,16 +180,16 @@ export default function MyBookings() {
           <div className="mb-empty">
             {activeTab === "current" ? (
               <>
-                <div className="mb-empty__icon"><FaDog/></div>
-                <p className="mb-empty__title">No active bookings</p>
-                <p className="mb-empty__sub">You don't have any pending or confirmed appointments.</p>
-                <button className="mb-empty__btn" onClick={() => navigate("/user/services")}>
-                  Book a Service 
+                <FaDog size={48} color="#d1a97a" />
+                <p className="mb-empty__title">No current bookings</p>
+                <p className="mb-empty__sub">You don't have any upcoming appointments.</p>
+                <button className="mb-empty__cta" onClick={() => navigate("/user/services")}>
+                  Book a Service 🐾
                 </button>
               </>
             ) : (
               <>
-                <div className="mb-empty__icon"><FaCalendarAlt/></div>
+                <FaBrush size={48} color="#d1a97a" />
                 <p className="mb-empty__title">No booking history</p>
                 <p className="mb-empty__sub">Completed and cancelled bookings will appear here.</p>
               </>
@@ -213,7 +204,7 @@ export default function MyBookings() {
               const isHistory = activeTab === "history";
               const isSuccess = status === "success";
               const chosen    = pendingRating[booking.id];
-              const petList   = getPets(booking); // ← multi-pet
+              const petList   = getPets(booking);
 
               return (
                 <div
@@ -223,13 +214,11 @@ export default function MyBookings() {
                 >
                   {isNew && <span className="mb-card__new-badge">New ✓</span>}
 
-                  {/* ── Top row ── */}
                   <div className="mb-card__top">
                     <div className="mb-card__service-wrap">
                       <div className="mb-card__service-icon">{isHistory ? <FaBrush size={20} color="#7a4419"/> : <FaDog size={20} color="#7a4419"/>}</div>
                       <div>
                         <p className="mb-card__service-title">{booking.serviceTitle}</p>
-                        {/* ── Multi-pet list ── */}
                         {petList.length > 1 ? (
                           <div className="mb-card__pet-list">
                             {petList.map((pet, idx) => (
@@ -252,7 +241,6 @@ export default function MyBookings() {
                     </span>
                   </div>
 
-                  {/* ── Price ── */}
                   <div className="mb-card__price-block">
                     <span className="mb-card__price-label">Total Price</span>
                     <span className="mb-card__price-value">
@@ -262,7 +250,6 @@ export default function MyBookings() {
 
                   <div className="mb-card__divider" />
 
-                  {/* ── Info rows ── */}
                   <div className="mb-card__info-grid">
                     <div className="mb-card__info-row">
                       <span className="mb-card__info-label"><FaCalendarAlt/> Appointment</span>
@@ -286,16 +273,11 @@ export default function MyBookings() {
 
                   <div className="mb-card__divider mb-card__divider--dashed" />
 
-                  {/* ── Reference number ── */}
                   <div className="mb-card__ref">
                     <span className="mb-card__ref-label"># Reference No.</span>
                     <code className="mb-card__ref-value">{booking.refNumber || "—"}</code>
                   </div>
 
-                  {/* ════════════════════════════════
-                      RATING + FEEDBACK
-                      Only for successful bookings
-                  ════════════════════════════════ */}
                   {isSuccess && (
                     <div className="mb-card__rating">
                       <div className="mb-card__divider mb-card__divider--dashed" style={{ margin: "0.75rem 0" }} />
@@ -305,34 +287,25 @@ export default function MyBookings() {
                           <div className="mb-rating__done-top">
                             <div className="mb-rating__stars">
                               {[1, 2, 3, 4, 5].map(star => (
-                                <FaStar
-                                  key={star}
-                                  style={{ color: star <= booking.rating ? "#f59e0b" : "#d1d5db" }}
-                                />
+                                <FaStar key={star} style={{ color: star <= booking.rating ? "#f59e0b" : "#d1d5db" }} />
                               ))}
                             </div>
                             <span className="mb-rating__thanks">Thanks for your feedback! 🐾</span>
                           </div>
                           {booking.feedback && (
-                            <p className="mb-rating__submitted-feedback">
-                              "{booking.feedback}"
-                            </p>
+                            <p className="mb-rating__submitted-feedback">"{booking.feedback}"</p>
                           )}
                         </div>
-
                       ) : (
                         <div className="mb-rating__prompt">
                           <p className="mb-rating__label">How was your experience?</p>
-
                           <div className="mb-rating__stars">
                             {[1, 2, 3, 4, 5].map(star => (
                               <FaStar
                                 key={star}
                                 className="mb-rating__star"
                                 style={{
-                                  color: star <= (hoveredRating[booking.id] ?? chosen ?? 0)
-                                    ? "#f59e0b"
-                                    : "#d1d5db",
+                                  color: star <= (hoveredRating[booking.id] ?? chosen ?? 0) ? "#f59e0b" : "#d1d5db",
                                   cursor: "pointer",
                                   transition: "color 0.15s ease",
                                   fontSize: "1.4rem",
@@ -356,9 +329,7 @@ export default function MyBookings() {
                                 rows={3}
                                 maxLength={300}
                                 value={feedbackText[booking.id] || ""}
-                                onChange={e =>
-                                  setFeedbackText(p => ({ ...p, [booking.id]: e.target.value }))
-                                }
+                                onChange={e => setFeedbackText(p => ({ ...p, [booking.id]: e.target.value }))}
                               />
                               <div className="mb-feedback__footer">
                                 <span className="mb-feedback__char-count">

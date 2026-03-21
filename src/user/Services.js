@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FaCut, FaPaw, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { getServices, getAllBookings } from "../services/api"; // ← changed
 import "../style/Navbar.css";
 
-/* ── Star display helper ── */
 const StarRating = ({ avg, count }) => {
   if (!count) return <span className="svc-rating__none">No reviews yet</span>;
   return (
@@ -25,8 +24,8 @@ const StarRating = ({ avg, count }) => {
 };
 
 export default function Services() {
-  const [services,      setServices]      = useState([]);
-  const [ratingMap,     setRatingMap]     = useState({}); // { serviceTitle: { avg, count } }
+  const [services,  setServices]  = useState([]);
+  const [ratingMap, setRatingMap] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,8 +35,8 @@ export default function Services() {
 
   const fetchServices = async () => {
     try {
-      const res = await api.get("/services");
-      setServices(res.data);
+      const data = await getServices(); // ← changed
+      setServices(data);
     } catch (error) {
       console.error("Error fetching services:", error);
     }
@@ -45,9 +44,8 @@ export default function Services() {
 
   const fetchRatings = async () => {
     try {
-      const res = await api.get("/bookings");
-      const rated = res.data.filter((b) => b.rating);
-      // Build a map keyed by serviceTitle
+      const allBookings = await getAllBookings(); // ← changed
+      const rated = allBookings.filter((b) => b.rating);
       const map = {};
       rated.forEach((b) => {
         const key = b.serviceTitle;
@@ -55,7 +53,6 @@ export default function Services() {
         map[key].total += Number(b.rating);
         map[key].count += 1;
       });
-      // Convert to avg
       const avgMap = {};
       Object.entries(map).forEach(([key, { total, count }]) => {
         avgMap[key] = { avg: total / count, count };
@@ -74,10 +71,9 @@ export default function Services() {
     navigate("/user/bookings", { state: { service } });
   };
 
+  // ── JSX is exactly the same as before, no changes needed ──
   return (
     <div className="svc-page">
-
-      {/* ── CSS Hero Banner ───────────────────── */}
       <div className="svc-hero">
         <div className="svc-hero__paws" aria-hidden="true">
           <span><FaPaw color="#ffff"/></span><span><FaCut color="#ffff"/></span><span><FaPaw color="#ffff"/></span>
@@ -97,7 +93,6 @@ export default function Services() {
         </div>
       </div>
 
-      {/* ── Services List ─────────────────────── */}
       <div className="svc-container">
         <div className="svc-list">
           {services.length === 0 ? (
@@ -107,56 +102,26 @@ export default function Services() {
               const r = ratingMap[service.title];
               return (
                 <div key={service.id} className="svc-card">
-
-                  {/* Image */}
                   {service.image && (
                     <div className="svc-card__img-wrap">
-                      <img
-                        src={service.image}
-                        alt={service.title}
-                        className="svc-card__img"
-                      />
+                      <img src={service.image} alt={service.title} className="svc-card__img" />
                     </div>
                   )}
-
-                  {/* Info */}
                   <div className="svc-card__body">
-                    <h5
-                      className="svc-card__name"
-                      onClick={() => goToDetails(service)}
-                    >
-                      {service.title}
-                    </h5>
-                    <p
-                      className="svc-card__desc"
-                      onClick={() => goToDetails(service)}
-                    >
-                      {service.desc}
-                    </p>
-
-                    {/* ✅ Rating row */}
+                    <h5 className="svc-card__name" onClick={() => goToDetails(service)}>{service.title}</h5>
+                    <p className="svc-card__desc" onClick={() => goToDetails(service)}>{service.desc}</p>
                     <StarRating avg={r?.avg || 0} count={r?.count || 0} />
-
                     <span className="svc-card__price">₱{service.price}</span>
                   </div>
-
-                  {/* Action */}
                   <div className="svc-card__action">
-                    <button
-                      className="svc-card__btn"
-                      onClick={() => goToBookingForm(service)}
-                    >
-                      Book Now
-                    </button>
+                    <button className="svc-card__btn" onClick={() => goToBookingForm(service)}>Book Now</button>
                   </div>
-
                 </div>
               );
             })
           )}
         </div>
       </div>
-
     </div>
   );
 }

@@ -1,27 +1,20 @@
 import React, { useEffect, useState } from "react";
-import api from "../services/api";
+import { getAllBookings } from "../services/api"; // ← Firebase
 import "../style/AdminStyle.css";
 
 export default function AdminStats({ onFilter, filterStatus, refreshKey }) {
   const [stats, setStats] = useState({
-    total: 0,
-    pending: 0,
-    confirmed: 0,
-    cancelled: 0,
-    completed: 0,
-    avgRating: null,
-    ratingCount: 0,
+    total: 0, pending: 0, confirmed: 0, cancelled: 0, completed: 0,
+    avgRating: null, ratingCount: 0,
   });
 
   const fetchStats = async () => {
-    const res = await api.get("/bookings");
-    const bookings = res.data;
+    const bookings = await getAllBookings(); // ← Firebase
 
     const rated = bookings.filter((b) => b.rating);
-    const avgRating =
-      rated.length > 0
-        ? (rated.reduce((sum, b) => sum + Number(b.rating), 0) / rated.length).toFixed(1)
-        : null;
+    const avgRating = rated.length > 0
+      ? (rated.reduce((sum, b) => sum + Number(b.rating), 0) / rated.length).toFixed(1)
+      : null;
 
     setStats({
       total:       bookings.length,
@@ -34,9 +27,7 @@ export default function AdminStats({ onFilter, filterStatus, refreshKey }) {
     });
   };
 
-  useEffect(() => {
-    fetchStats();
-  }, [refreshKey]);
+  useEffect(() => { fetchStats(); }, [refreshKey]);
 
   const CARDS = [
     { label: "Total",     value: stats.total,     status: "ALL",       mod: "total"     },
@@ -48,18 +39,13 @@ export default function AdminStats({ onFilter, filterStatus, refreshKey }) {
 
   return (
     <div className="as-wrapper">
-
-      {/* ── Stat Cards ── */}
       <div className="as-grid">
-        {CARDS.map(({ label, value, status, icon, mod }) => (
+        {CARDS.map(({ label, value, status, mod }) => (
           <button
             key={status}
-            className={`as-card as-card--${mod} ${
-              filterStatus === status ? "as-card--active" : ""
-            }`}
+            className={`as-card as-card--${mod} ${filterStatus === status ? "as-card--active" : ""}`}
             onClick={() => onFilter(status)}
           >
-
             <div className="as-card__body">
               <span className="as-card__value">{value}</span>
               <span className="as-card__label">{label}</span>
