@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaCalendarAlt, FaCarAlt, FaCut, FaPaw, FaHeart, FaMedal, FaShieldAlt, FaCameraRetro, FaRegClock, FaSync } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { getServices } from "../services/api"; // ← Firebase
 import "../style/Navbar.css";
 
 // ── Animated counter hook ──────────────────────────────────────────
@@ -84,8 +84,8 @@ export default function Home() {
 
   const fetchServices = async () => {
     try {
-      const res = await api.get("/services");
-      setServices(res.data);
+      const data = await getServices(); // ← Firebase
+      setServices(data);
     } catch (err) {
       console.error("Failed to fetch services:", err);
     }
@@ -282,12 +282,10 @@ export default function Home() {
             <p>Book a grooming session today and give your fur baby the pampering they deserve.</p>
           </div>
           <button className="cta-btn" onClick={handleBookNow}>
-             Book an Appointment
+            Book an Appointment
           </button>
         </div>
       </section>
-
-
     </>
   );
 }
