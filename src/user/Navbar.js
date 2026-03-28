@@ -6,11 +6,8 @@ import "../style/Navbar.css";
 const Navbar = () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
-
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const navRef = useRef(null);
-  const buttonRef = useRef(null);
+  const menuRef = useRef(null);
 
   const handleNav = (path) => {
     if (!user) {
@@ -21,36 +18,29 @@ const Navbar = () => {
     setMenuOpen(false);
   };
 
-  /* ✅ FIXED: Click outside handler */
+  // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        navRef.current &&
-        !navRef.current.contains(e.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(e.target)
-      ) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
         setMenuOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* Close menu on resize */
+  // Close menu on resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) setMenuOpen(false);
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
-    <nav className="happynav" ref={navRef}>
-
+    <nav className="happynav" ref={menuRef}>
+      
       {/* TOP BAR */}
       <div className="happynav__inner">
 
@@ -70,15 +60,18 @@ const Navbar = () => {
 
         {/* RIGHT SIDE */}
         <div className="happynav__auth">
-
           {!user ? (
             <>
-              <Link to="/login" className="happynav__btn-login">Login</Link>
-              <Link to="/register" className="happynav__btn-register">Register</Link>
+              <Link to="/login" className="happynav__btn-login">
+                Login
+              </Link>
+              <Link to="/register" className="happynav__btn-register">
+                Register
+              </Link>
             </>
           ) : (
             <>
-              {/* Desktop Search */}
+              {/* Desktop search */}
               <div className="happynav__search happynav__search--desktop">
                 <input
                   type="text"
@@ -90,7 +83,7 @@ const Navbar = () => {
                 </button>
               </div>
 
-              {/* Desktop Profile */}
+              {/* Desktop profile */}
               <button
                 className="happynav__profile happynav__profile--desktop"
                 onClick={() => navigate("/user/profile")}
@@ -98,28 +91,29 @@ const Navbar = () => {
                 <FaUserCircle className="happynav__profile-icon" />
               </button>
 
-              {/* ✅ FIXED HAMBURGER */}
+              {/* Hamburger */}
               <button
-                ref={buttonRef}
                 className="happynav__hamburger"
-                onClick={() => setMenuOpen(prev => !prev)}
+                onClick={() => setMenuOpen(!menuOpen)}
               >
                 {menuOpen ? <FaTimes /> : <FaBars />}
               </button>
             </>
           )}
-
         </div>
       </div>
 
-      {/* ✅ IMPORTANT: DROPDOWN OUTSIDE INNER */}
+      {/* MOBILE DROPDOWN (NOW PUSHES CONTENT) */}
       {user && (
         <ul className={`happynav__links ${menuOpen ? "happynav__links--open" : ""}`}>
-
+          
           <li className="happynav__item">
             <button
               className="happynav__link"
-              onClick={() => { navigate("/"); setMenuOpen(false); }}
+              onClick={() => {
+                navigate("/");
+                setMenuOpen(false);
+              }}
             >
               Home
             </button>
@@ -188,7 +182,6 @@ const Navbar = () => {
               My Profile
             </button>
           </li>
-
         </ul>
       )}
     </nav>
