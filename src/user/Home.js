@@ -282,7 +282,7 @@ export default function Home() {
             <p>Book a grooming session today and give your fur baby the pampering they deserve.</p>
           </div>
           <button className="cta-btn" onClick={handleBookNow}>
-            Book an Appointment
+             Book an Appointment
           </button>
         </div>
       </section>
