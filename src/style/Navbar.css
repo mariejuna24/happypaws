@@ -1,208 +1,21 @@
 /* ══════════════════════════════════════════════
-   HAPPYNAV — BASE (Desktop)
-══════════════════════════════════════════════ */
-.happynav {
-  position: relative;
-  display: flex;
-  align-items: center;
-  background-color: #7a4419;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-  padding: 0 1.5rem;
-  height: 64px;
-  z-index: 1000;
-}
-
-.happynav__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-}
-
-/* ── Logo ── */
-.happynav__brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.happynav__logo-img {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-  border-radius: 50%;
-}
-
-.happynav__brand-name {
-  font-family: 'Lobster Two', cursive;
-  font-size: 1.4rem;
-  color: #fff;
-  white-space: nowrap;
-}
-
-/* ── Nav Links (Desktop) ── */
-.happynav__links {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  gap: 0.25rem;
-}
-
-.happynav__item {
-  display: flex;
-  align-items: center;
-}
-
-.happynav__link {
-  background: none;
-  border: none;
-  color: #fff;
-  font-family: 'EB Garamond', serif;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 0.4rem 0.75rem;
-  border-radius: 6px;
-  transition: background 0.2s, color 0.2s;
-  white-space: nowrap;
-}
-
-.happynav__link:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffe5cc;
-}
-
-/* ── Auth / Right Area ── */
-.happynav__auth {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-shrink: 0;
-}
-
-.happynav__btn-login {
-  text-decoration: none;
-  color: #fff;
-  border: 1.5px solid #fff;
-  border-radius: 8px;
-  padding: 0.35rem 1rem;
-  font-size: 0.9rem;
-  transition: background 0.2s, color 0.2s;
-  white-space: nowrap;
-}
-
-.happynav__btn-login:hover {
-  background: #fff;
-  color: #7a4419;
-}
-
-.happynav__btn-register {
-  text-decoration: none;
-  background: #e8712a;
-  color: #fff;
-  border-radius: 8px;
-  padding: 0.35rem 1rem;
-  font-size: 0.9rem;
-  transition: background 0.2s;
-  white-space: nowrap;
-}
-
-.happynav__btn-register:hover {
-  background: #cf5e1a;
-}
-
-/* ── Search ── */
-.happynav__search {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.happynav__search-input {
-  border: none;
-  background: transparent;
-  padding: 0.35rem 0.6rem;
-  font-size: 0.88rem;
-  outline: none;
-  width: 140px;
-  color: #fff;
-}
-
-.happynav__search-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.happynav__search-btn {
-  background: none;
-  border: none;
-  padding: 0.35rem 0.6rem;
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.8);
-  display: flex;
-  align-items: center;
-}
-
-.happynav__search-btn:hover { color: #fff; }
-
-/* ── Profile ── */
-.happynav__profile {
-  background: none;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  padding: 0.25rem;
-  border-radius: 50%;
-  transition: background 0.2s;
-}
-
-.happynav__profile:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.happynav__profile-icon {
-  font-size: 1.8rem;
-  color: #fff;
-}
-
-/* ── Desktop: show search & profile, hide mobile-only ── */
-.happynav__search--desktop   { display: flex; }
-.happynav__profile--desktop  { display: flex; }
-.happynav__item--mobile-only { display: none; }
-
-/* ── Hamburger — hidden on desktop ── */
-.happynav__hamburger {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #fff;
-  cursor: pointer;
-  padding: 0.25rem;
-  margin-left: 0.5rem;
-  transition: color 0.2s;
-  align-items: center;
-  justify-content: center;
-}
-
-.happynav__hamburger:hover { color: #ffe5cc; }
-
-/* ══════════════════════════════════════════════
-   HAPPYNAV — MOBILE (≤ 768px)
+   HAPPYNAV — MOBILE (FIXED, NO OVERLAP)
 ══════════════════════════════════════════════ */
 @media (max-width: 768px) {
 
   .happynav {
-    height: 60px;
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    padding: 0;
+  }
+
+  .happynav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 0 1rem;
+    height: 60px;
   }
 
   /* Show hamburger */
@@ -210,77 +23,49 @@
     display: flex;
   }
 
-  /* Hide desktop search & profile */
+  /* Hide desktop elements */
   .happynav__search--desktop  { display: none !important; }
   .happynav__profile--desktop { display: none !important; }
 
-  /* Show mobile-only items inside dropdown */
-  .happynav__item--mobile-only {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  /* Dropdown menu — hidden by default */
+  /* NAV DROPDOWN FIX */
   .happynav__links {
     display: none;
     flex-direction: column;
-    align-items: flex-start;
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
+    width: 100%;
     background: #7a4419;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    padding: 0.75rem 1rem 1.25rem;
-    gap: 0;
-    z-index: 999;
-    border-top: 2px solid rgba(255, 255, 255, 0.15);
-    animation: slideDown 0.2s ease;
+    border-top: 1px solid rgba(255,255,255,0.1);
   }
 
-  /* Open state */
-  .happynav__links--open { display: flex; }
-
-  @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .happynav__links--open {
+    display: flex;
   }
 
-  .happynav__item { width: 100%; }
+  .happynav__item {
+    width: 100%;
+  }
 
   .happynav__link {
     width: 100%;
     text-align: left;
-    padding: 0.7rem 0.5rem;
-    border-radius: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 0.97rem;
-    color: #fff;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 1rem;
   }
 
-  .happynav__link:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #ffe5cc;
+  /* Mobile search */
+  .happynav__item--mobile-only {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0.75rem 1rem;
   }
 
-  /* Mobile search inside dropdown */
   .happynav__item--mobile-only .happynav__search {
     width: 100%;
-    margin-top: 0.75rem;
-    border-radius: 8px;
   }
 
-  .happynav__item--mobile-only .happynav__search-input { width: 100%; }
-
-  /* Mobile profile link */
-  .happynav__item--mobile-only .happynav__link {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    border-bottom: none;
-    padding-top: 0.75rem;
-    color: #fff;
+  .happynav__search-input {
+    width: 100%;
   }
 }
 
