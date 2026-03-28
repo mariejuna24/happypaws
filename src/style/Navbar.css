@@ -5,7 +5,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  background-color: #7a4419;        /* brown — matches your screenshot */
+  background-color: #7a4419;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
   padding: 0 1.5rem;
   height: 64px;
@@ -150,9 +150,7 @@
   align-items: center;
 }
 
-.happynav__search-btn:hover {
-  color: #fff;
-}
+.happynav__search-btn:hover { color: #fff; }
 
 /* ── Profile ── */
 .happynav__profile {
@@ -195,9 +193,7 @@
   justify-content: center;
 }
 
-.happynav__hamburger:hover {
-  color: #ffe5cc;
-}
+.happynav__hamburger:hover { color: #ffe5cc; }
 
 /* ══════════════════════════════════════════════
    HAPPYNAV — MOBILE (≤ 768px)
@@ -244,18 +240,14 @@
   }
 
   /* Open state */
-  .happynav__links--open {
-    display: flex;
-  }
+  .happynav__links--open { display: flex; }
 
   @keyframes slideDown {
     from { opacity: 0; transform: translateY(-6px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .happynav__item {
-    width: 100%;
-  }
+  .happynav__item { width: 100%; }
 
   .happynav__link {
     width: 100%;
@@ -279,9 +271,7 @@
     border-radius: 8px;
   }
 
-  .happynav__item--mobile-only .happynav__search-input {
-    width: 100%;
-  }
+  .happynav__item--mobile-only .happynav__search-input { width: 100%; }
 
   /* Mobile profile link */
   .happynav__item--mobile-only .happynav__link {
@@ -293,7 +283,6 @@
     color: #fff;
   }
 }
-
 
 
 /* =========================================
