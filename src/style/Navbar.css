@@ -29,6 +29,7 @@
 
   /* NAV DROPDOWN FIX */
   .happynav__links {
+    position: static;
     display: none;
     flex-direction: column;
     width: 100%;
