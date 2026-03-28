@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { createBooking } from "../services/api";
+import { createBooking } from "../services/api"; // ← Firebase
 import { db } from "../firebase";
 import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
 import "../style/Navbar.css";
@@ -15,6 +15,7 @@ const ADD_ONS_LIST = [
 
 const STEP_LABELS = ["Add-ons", "Schedule", "Your Info"];
 
+/* ── helpers ───────────────────────────────────────────── */
 const EMPTY_PET = () => ({ id: Date.now() + Math.random(), petName: "", species: "" });
 
 const getInitialInfos = (loggedUser) => {
@@ -41,6 +42,7 @@ export default function BookingForm() {
   const loggedUser  = JSON.parse(localStorage.getItem("user")) || {};
   const today       = new Date().toISOString().split("T")[0];
 
+  /* ── state ─────────────────────────────────────────────── */
   const [savedInfos,     setSavedInfos]     = useState(() => getInitialInfos(loggedUser));
   const [selectedInfoId, setSelectedInfoId] = useState(() => getInitialSelectedId(getInitialInfos(loggedUser)));
   const [editingInfoId,  setEditingInfoId]  = useState(null);
@@ -64,6 +66,7 @@ export default function BookingForm() {
     };
   });
 
+  /* ── multi-pet list ─────────────────────────────────────── */
   const [pets, setPets] = useState(() => {
     const booking = state?.booking;
     if (booking?.pets?.length > 0) return booking.pets;
@@ -71,12 +74,15 @@ export default function BookingForm() {
     return [EMPTY_PET()];
   });
 
+  /* ── derived prices ─────────────────────────────────────── */
   const servicePrice = Number(service?.servicePrice || service?.price) || 0;
   const addOnsPrice  = formData.addOns.reduce((s, a) => s + (Number(a.price) || 0), 0);
+  // Each pet is charged the base service price
   const totalPrice   = (servicePrice * pets.length) + addOnsPrice;
 
   if (!service) return <p className="bf-no-service">Service not found.</p>;
 
+  /* ── pet handlers ───────────────────────────────────────── */
   const handlePetChange = (id, field, value) =>
     setPets(p => p.map(pet => pet.id === id ? { ...pet, [field]: value } : pet));
 
@@ -90,6 +96,7 @@ export default function BookingForm() {
     setPets(p => p.filter(pet => pet.id !== id));
   };
 
+  /* ── info card handlers ─────────────────────────────────── */
   const handleSelectInfo = (info) => {
     setSelectedInfoId(info.id);
     setEditingInfoId(null);
@@ -138,6 +145,7 @@ export default function BookingForm() {
       setFormData((p) => ({ ...p, fullName: info.fullName, phone: info.phone, email: info.email }));
   };
 
+  /* ── form change ────────────────────────────────────────── */
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((p) => ({ ...p, [name]: value }));
@@ -156,6 +164,7 @@ export default function BookingForm() {
     }));
   };
 
+  /* ── step next validation ───────────────────────────────── */
   const handleNext = () => {
     if (step === 2) {
       if (!formData.date || !formData.time) { setScheduleError("Please select both date and time."); return; }
@@ -166,6 +175,7 @@ export default function BookingForm() {
     setStep((s) => s + 1);
   };
 
+  /* ── submit ─────────────────────────────────────────────── */
   const generateRefNumber = () => {
     const ts  = Date.now().toString(36).toUpperCase();
     const rnd = Math.random().toString(36).substring(2, 6).toUpperCase();
@@ -193,14 +203,14 @@ export default function BookingForm() {
       setInfoError("Invalid email address.");
       return;
     }
-    if (formData.date < today) { setScheduleError("Date cannot be in the past."); setStep(2); return; }
+    if (formData.date < today)  { setScheduleError("Date cannot be in the past."); setStep(2); return; }
     if (formData.time < "08:00" || formData.time > "18:00") { setScheduleError("Time must be between 08:00 and 18:00."); setStep(2); return; }
 
     setSubmitting(true);
     try {
       const userId = loggedUser.uid;
 
-      // ← BLOCK if user already has a booking on same date — never delete existing
+      // ← BLOCK if user already has a booking on same date — Firebase check
       if (!editing) {
         const q = query(
           collection(db, "bookings"),
@@ -222,32 +232,35 @@ export default function BookingForm() {
         serviceTitle: service.serviceTitle || service.title,
         servicePrice,
         ...formData,
+        // keep legacy single-pet fields pointing to the first pet
         petName:  pets[0].petName,
         species:  pets[0].species,
+        // full multi-pet list
         pets,
         totalPrice,
-        status: "Pending", // ← always Pending, admin confirms manually
+        status: "Pending",
         userId,
       };
 
       if (editing && state.booking?.id) {
         finalRefNumber = state.booking.refNumber;
         const bookingRef = doc(db, "bookings", state.booking.id);
-        await updateDoc(bookingRef, { ...payload, refNumber: finalRefNumber });
+        await updateDoc(bookingRef, { ...payload, refNumber: finalRefNumber }); // ← Firebase
       } else {
         finalRefNumber = generateRefNumber();
-        await createBooking({ ...payload, refNumber: finalRefNumber });
+        await createBooking({ ...payload, refNumber: finalRefNumber }); // ← Firebase
       }
 
       localStorage.setItem("lastUsedInfoId", String(selectedInfoId));
       localStorage.setItem("userInfos", JSON.stringify(savedInfos));
 
+      // Build one line per pet for the Swal summary
       const petLines = pets
         .map(p => `<div class="swal-detail"><span>🐾 Pet</span><strong>${p.petName} (${p.species})</strong></div>`)
         .join("");
 
       await Swal.fire({
-        title: editing ? "Booking Updated!" : "Booking Submitted! 🐾",
+        title: editing ? "Booking Updated!" : "Booking Confirmed! 🐾",
         html: `
           <div class="swal-booking-body">
             <p class="swal-service">${service.serviceTitle || service.title}</p>
@@ -258,7 +271,6 @@ export default function BookingForm() {
               <span># Ref No.</span>
               <code>${finalRefNumber}</code>
             </div>
-            <p style="margin-top:10px;font-size:13px;color:#888;">⏳ Your booking is pending — the admin will confirm it shortly.</p>
           </div>
         `,
         icon: "success",
@@ -281,6 +293,7 @@ export default function BookingForm() {
     }
   };
 
+  /* ── render ─────────────────────────────────────────────── */
   return (
     <div className="bf-page">
       <div className="bf-container">
@@ -289,6 +302,7 @@ export default function BookingForm() {
 
         <div className="bf-card">
 
+          {/* ── Step indicator ── */}
           <div className="bf-steps">
             {STEP_LABELS.map((label, i) => (
               <React.Fragment key={i}>
@@ -303,10 +317,12 @@ export default function BookingForm() {
             ))}
           </div>
 
+          {/* ── Progress bar ── */}
           <div className="bf-progress">
             <div className="bf-progress__fill" style={{ width: `${((step - 1) / (STEP_LABELS.length - 1)) * 100}%` }} />
           </div>
 
+          {/* ── Header / price summary ── */}
           <div className="bf-header">
             <div className="bf-header__icon-wrap">🐾</div>
             <h3 className="bf-header__title">{service.serviceTitle || service.title}</h3>
@@ -331,6 +347,9 @@ export default function BookingForm() {
             </div>
           </div>
 
+          {/* ══════════════════════════════════
+              STEP 1 — Add-ons
+          ══════════════════════════════════ */}
           {step === 1 && (
             <div className="bf-section">
               <h5 className="bf-section__heading">🐾 Select Add-ons <span className="bf-section__optional">(optional)</span></h5>
@@ -353,6 +372,9 @@ export default function BookingForm() {
             </div>
           )}
 
+          {/* ══════════════════════════════════
+              STEP 2 — Schedule
+          ══════════════════════════════════ */}
           {step === 2 && (
             <div className="bf-section">
               <h5 className="bf-section__heading">📅 Choose Date & Time</h5>
@@ -366,7 +388,9 @@ export default function BookingForm() {
                   <input className="bf-input" type="time" name="time" value={formData.time} onChange={handleChange} min="08:00" max="18:00" />
                 </div>
               </div>
+
               {scheduleError && <div className="bf-error-popup">⚠️ {scheduleError}</div>}
+
               <div className="bf-schedule-note">
                 <span className="bf-schedule-note__icon">⏰</span>
                 <div>
@@ -377,10 +401,14 @@ export default function BookingForm() {
             </div>
           )}
 
+          {/* ══════════════════════════════════
+              STEP 3 — Your Info
+          ══════════════════════════════════ */}
           {step === 3 && (
             <div className="bf-section">
               <h5 className="bf-section__heading">👤 Your Details</h5>
 
+              {/* Saved info cards */}
               <div className="bf-saved-info-container">
                 {savedInfos.map((info) => (
                   <div
@@ -420,6 +448,7 @@ export default function BookingForm() {
                 <button className="bf-add-new-info" onClick={handleAddInfo}>+ Add New</button>
               </div>
 
+              {/* Contact fields */}
               <div className="bf-fields">
                 <div className="bf-field">
                   <label className="bf-label">Full Name</label>
@@ -435,13 +464,18 @@ export default function BookingForm() {
                 </div>
               </div>
 
+              {/* ── Pet Information — multi-pet ── */}
               <div className="bf-pets-header">
                 <h5 className="bf-section__heading bf-section__heading--pet">
                   🐶 Pet Information
-                  <span className="bf-pets-count">&nbsp;({pets.length} pet{pets.length > 1 ? "s" : ""})</span>
+                  <span className="bf-pets-count">
+                    &nbsp;({pets.length} pet{pets.length > 1 ? "s" : ""})
+                  </span>
                 </h5>
                 {pets.length < 5 && (
-                  <button className="bf-btn-add-pet" onClick={addPet}>+ Add Another Pet</button>
+                  <button className="bf-btn-add-pet" onClick={addPet}>
+                    + Add Another Pet
+                  </button>
                 )}
               </div>
 
@@ -450,19 +484,29 @@ export default function BookingForm() {
                   <div className="bf-pet-card__header">
                     <span className="bf-pet-card__label">🐾 Pet {idx + 1}</span>
                     {pets.length > 1 && (
-                      <button className="bf-pet-card__remove" onClick={() => removePet(pet.id)}>✕ Remove</button>
+                      <button className="bf-pet-card__remove" onClick={() => removePet(pet.id)}>
+                        ✕ Remove
+                      </button>
                     )}
                   </div>
                   <div className="bf-fields">
                     <div className="bf-field">
                       <label className="bf-label">Pet Name</label>
-                      <input className="bf-input" placeholder="e.g. Buddy" value={pet.petName}
-                        onChange={(e) => handlePetChange(pet.id, "petName", e.target.value)} />
+                      <input
+                        className="bf-input"
+                        placeholder="e.g. Buddy"
+                        value={pet.petName}
+                        onChange={(e) => handlePetChange(pet.id, "petName", e.target.value)}
+                      />
                     </div>
                     <div className="bf-field">
                       <label className="bf-label">Species / Breed</label>
-                      <input className="bf-input" placeholder="e.g. Shih Tzu" value={pet.species}
-                        onChange={(e) => handlePetChange(pet.id, "species", e.target.value)} />
+                      <input
+                        className="bf-input"
+                        placeholder="e.g. Shih Tzu"
+                        value={pet.species}
+                        onChange={(e) => handlePetChange(pet.id, "species", e.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -472,6 +516,7 @@ export default function BookingForm() {
             </div>
           )}
 
+          {/* ── Navigation ── */}
           <div className="bf-nav">
             {step > 1 && (
               <button className="bf-btn-prev" onClick={() => { setScheduleError(""); setInfoError(""); setStep((s) => s - 1); }}>
