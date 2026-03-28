@@ -323,6 +323,102 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+/* ── Paste these rules into your existing Navbar.css ── */
+
+/* Hamburger button — hidden on desktop */
+.happynav__hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: #7a4419;
+  cursor: pointer;
+  padding: 0.25rem;
+  margin-left: 0.5rem;
+  transition: color 0.2s;
+}
+.happynav__hamburger:hover {
+  color: #e8712a;
+}
+
+/* Desktop search & profile — visible by default */
+.happynav__search--desktop { display: flex; }
+.happynav__profile--desktop { display: flex; }
+
+/* Mobile-only items — hidden on desktop */
+.happynav__item--mobile-only { display: none; }
+
+/* ── Mobile breakpoint ── */
+@media (max-width: 768px) {
+
+  /* Show hamburger */
+  .happynav__hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Hide desktop search & profile */
+  .happynav__search--desktop { display: none !important; }
+  .happynav__profile--desktop { display: none !important; }
+
+  /* Show mobile-only items inside the dropdown */
+  .happynav__item--mobile-only { display: flex; }
+
+  /* Nav links: hidden by default, slides down when open */
+  .happynav__links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    padding: 1rem 1.25rem 1.5rem;
+    gap: 0.25rem;
+    z-index: 999;
+    animation: slideDown 0.2s ease;
+  }
+
+  .happynav__links--open {
+    display: flex;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .happynav__item {
+    width: 100%;
+  }
+
+  .happynav__link {
+    width: 100%;
+    text-align: left;
+    padding: 0.65rem 0.5rem;
+    border-bottom: 1px solid #f3e8db;
+    font-size: 0.95rem;
+  }
+
+  /* Mobile search inside menu */
+  .happynav__item--mobile-only .happynav__search {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .happynav__item--mobile-only .happynav__search-input {
+    width: 100%;
+  }
+
+  /* Make sure nav is relative so dropdown positions correctly */
+  .happynav {
+    position: relative;
+  }
+}
+
+
 
 /* =========================================
                 Home.css
