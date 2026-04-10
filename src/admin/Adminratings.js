@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getAllBookings, getServices } from "../services/api"; // ← Firebase
+import { getAllBookings, getServices } from "../services/api";
+import { FaStar, FaComments, FaTrophy, FaCut, FaChartBar } from "react-icons/fa";
 import "../style/admin.css";
 
 const StarDisplay = ({ rating, size = "sm" }) => (
@@ -22,7 +23,6 @@ export default function AdminRatings() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        // ← Firebase: both use our api functions
         const [allBookings, allServices] = await Promise.all([
           getAllBookings(),
           getServices(),
@@ -91,7 +91,7 @@ export default function AdminRatings() {
 
       <div className="ar-header">
         <div className="ar-header__left">
-          <span className="ar-header__icon">⭐</span>
+          <span className="ar-header__icon"><FaStar color="#f59e0b" /></span>
           <div>
             <h3 className="ar-header__title">Ratings & Reviews</h3>
             <p className="ar-header__sub">{totalRated} review{totalRated !== 1 ? "s" : ""} from customers</p>
@@ -101,28 +101,28 @@ export default function AdminRatings() {
 
       <div className="ar-summary">
         <div className="ar-summary-card ar-summary-card--avg">
-          <span className="ar-summary-card__icon">⭐</span>
+          <span className="ar-summary-card__icon"><FaStar color="#f59e0b" /></span>
           <div>
             <p className="ar-summary-card__value">{overallAvg}</p>
             <p className="ar-summary-card__label">Overall Rating</p>
           </div>
         </div>
         <div className="ar-summary-card ar-summary-card--total">
-          <span className="ar-summary-card__icon">💬</span>
+          <span className="ar-summary-card__icon"><FaComments color="#60a5fa" /></span>
           <div>
             <p className="ar-summary-card__value">{totalRated}</p>
             <p className="ar-summary-card__label">Total Reviews</p>
           </div>
         </div>
         <div className="ar-summary-card ar-summary-card--five">
-          <span className="ar-summary-card__icon">🏆</span>
+          <span className="ar-summary-card__icon"><FaTrophy color="#f59e0b" /></span>
           <div>
             <p className="ar-summary-card__value">{fiveStarPct}%</p>
             <p className="ar-summary-card__label">5-Star Rate</p>
           </div>
         </div>
         <div className="ar-summary-card ar-summary-card--services">
-          <span className="ar-summary-card__icon">✂️</span>
+          <span className="ar-summary-card__icon"><FaCut color="#a78bfa" /></span>
           <div>
             <p className="ar-summary-card__value">{serviceStats.length}</p>
             <p className="ar-summary-card__label">Rated Services</p>
@@ -132,17 +132,17 @@ export default function AdminRatings() {
 
       <div className="ar-tabs">
         <button className={`ar-tab${activeTab === "overview" ? " ar-tab--active" : ""}`} onClick={() => setActiveTab("overview")}>
-          📊 By Service
+          <FaChartBar size={12} style={{ marginRight: 6 }} /> By Service
         </button>
         <button className={`ar-tab${activeTab === "reviews" ? " ar-tab--active" : ""}`} onClick={() => setActiveTab("reviews")}>
-          💬 All Reviews
+          <FaComments size={12} style={{ marginRight: 6 }} /> All Reviews
           {totalRated > 0 && <span className="ar-tab__badge">{totalRated}</span>}
         </button>
       </div>
 
       {totalRated === 0 ? (
         <div className="ar-empty">
-          <span className="ar-empty__icon">⭐</span>
+          <span className="ar-empty__icon"><FaStar size={32} color="#f59e0b" /></span>
           <p className="ar-empty__title">No ratings yet</p>
           <p className="ar-empty__sub">Ratings will appear here once customers review their completed bookings.</p>
         </div>
@@ -156,9 +156,9 @@ export default function AdminRatings() {
                 serviceStats.map((svc) => (
                   <div key={svc.id} className="ar-svc-card">
                     <div className="ar-svc-card__top">
-                      <img src={svc.image || "https://placehold.co/60x60?text=🐾"} alt={svc.title}
+                      <img src={svc.image || "https://placehold.co/60x60?text=Pet"} alt={svc.title}
                         className="ar-svc-card__img"
-                        onError={e => { e.target.src = "https://placehold.co/60x60?text=🐾"; }} />
+                        onError={e => { e.target.src = "https://placehold.co/60x60?text=Pet"; }} />
                       <div className="ar-svc-card__info">
                         <p className="ar-svc-card__title">{svc.title}</p>
                         <p className="ar-svc-card__count">{svc.ratingCount} review{svc.ratingCount !== 1 ? "s" : ""}</p>
