@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { logoutUser } from "../services/api"; // ← Firebase
+import {
+  FaHome, FaChartBar, FaCut, FaStar, FaCog,
+  FaUsers, FaSignOutAlt, FaLock, FaChevronDown,
+  FaChevronRight, FaAngleLeft, FaAngleRight,
+} from "react-icons/fa";
+import { logoutUser } from "../services/api";
 import "../style/AdminStyle.css";
 
 const AdminNavbar = () => {
@@ -12,7 +17,7 @@ const AdminNavbar = () => {
   const handleNav = (path) => navigate(`/admin/${path}`);
 
   const handleLogout = async () => {
-    await logoutUser(); // ← Firebase signOut
+    await logoutUser();
     localStorage.removeItem("user");
     navigate("/admin/login");
   };
@@ -35,7 +40,7 @@ const AdminNavbar = () => {
           </div>
         </Link>
         <button className="admin-sidebar__toggle" onClick={() => setCollapsed(!collapsed)} aria-label="Toggle sidebar">
-          {collapsed ? "›" : "‹"}
+          {collapsed ? <FaAngleRight size={14} /> : <FaAngleLeft size={14} />}
         </button>
       </div>
 
@@ -45,25 +50,25 @@ const AdminNavbar = () => {
         <span className="admin-sidebar__section-label">Main</span>
 
         <button className={`admin-nav-item ${isActive("dashboard") ? "active" : ""}`} onClick={() => handleNav("dashboard")}>
-          <span className="admin-nav-item__icon">🏠</span>
+          <span className="admin-nav-item__icon"><FaHome size={14} /></span>
           <span className="admin-nav-item__label">Dashboard</span>
           {isActive("dashboard") && <span className="admin-nav-item__dot" />}
         </button>
 
         <button className={`admin-nav-item ${isActive("stats") ? "active" : ""}`} onClick={() => handleNav("stats")}>
-          <span className="admin-nav-item__icon">📊</span>
+          <span className="admin-nav-item__icon"><FaChartBar size={14} /></span>
           <span className="admin-nav-item__label">Bookings</span>
           {isActive("stats") && <span className="admin-nav-item__dot" />}
         </button>
 
         <button className={`admin-nav-item ${isActive("admin-services") ? "active" : ""}`} onClick={() => handleNav("admin-services")}>
-          <span className="admin-nav-item__icon">✂️</span>
+          <span className="admin-nav-item__icon"><FaCut size={14} /></span>
           <span className="admin-nav-item__label">Services</span>
           {isActive("admin-services") && <span className="admin-nav-item__dot" />}
         </button>
 
         <button className={`admin-nav-item ${isActive("ratings") ? "active" : ""}`} onClick={() => handleNav("ratings")}>
-          <span className="admin-nav-item__icon">⭐</span>
+          <span className="admin-nav-item__icon"><FaStar size={14} /></span>
           <span className="admin-nav-item__label">Ratings</span>
           {isActive("ratings") && <span className="admin-nav-item__dot" />}
         </button>
@@ -71,15 +76,17 @@ const AdminNavbar = () => {
         <span className="admin-sidebar__section-label">Manage</span>
 
         <button className={`admin-nav-item admin-nav-item--dropdown ${manageOpen ? "open" : ""}`} onClick={() => setManageOpen(!manageOpen)}>
-          <span className="admin-nav-item__icon">⚙️</span>
+          <span className="admin-nav-item__icon"><FaCog size={14} /></span>
           <span className="admin-nav-item__label">Manage</span>
-          <span className="admin-nav-item__chevron">{manageOpen ? "▾" : "▸"}</span>
+          <span className="admin-nav-item__chevron">
+            {manageOpen ? <FaChevronDown size={10} /> : <FaChevronRight size={10} />}
+          </span>
         </button>
 
         {manageOpen && (
           <div className="admin-nav-submenu">
             <button className={`admin-nav-subitem ${isActive("manage-users") ? "active" : ""}`} onClick={() => handleNav("manage-users")}>
-              <span>👥</span> Users
+              <FaUsers size={12} /> Users
             </button>
           </div>
         )}
@@ -93,11 +100,11 @@ const AdminNavbar = () => {
           <div className="admin-sidebar__admin-avatar">A</div>
           <div className="admin-sidebar__admin-text">
             <span className="admin-sidebar__admin-name">Administrator</span>
-            <span className="admin-sidebar__admin-badge">🔒 Admin</span>
+            <span className="admin-sidebar__admin-badge"><FaLock size={10} /> Admin</span>
           </div>
         </div>
         <button className="admin-logout-btn" onClick={handleLogout}>
-          <span>🚪</span>
+          <FaSignOutAlt size={14} />
           <span className="admin-nav-item__label">Logout</span>
         </button>
       </div>
