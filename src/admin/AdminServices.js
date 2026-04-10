@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { getServices, addService, updateService, deleteService } from "../services/api"; // ← Firebase
+import { getServices, addService, updateService, deleteService } from "../services/api";
 import Swal from "sweetalert2";
+import {
+  FaCut, FaPaw, FaEye, FaEdit, FaTrash,
+  FaPlus, FaClipboardList, FaBath, FaStickyNote,
+  FaExclamationTriangle, FaCheck, FaTimes,
+} from "react-icons/fa";
 
 const EMPTY_SERVICE = {
   title: "",
@@ -22,7 +27,7 @@ const AdminServices = () => {
 
   const fetchServices = async () => {
     try {
-      const data = await getServices(); // ← Firebase
+      const data = await getServices();
       setServices(data);
     } catch (err) {
       console.error(err);
@@ -79,9 +84,9 @@ const AdminServices = () => {
       };
 
       if (editTarget) {
-        await updateService(editTarget.id, { ...editTarget, ...payload }); // ← Firebase
+        await updateService(editTarget.id, { ...editTarget, ...payload });
       } else {
-        await addService(payload); // ← Firebase
+        await addService(payload);
       }
 
       await Swal.fire({
@@ -115,7 +120,7 @@ const AdminServices = () => {
       cancelButtonText:   "Cancel",
     });
     if (!result.isConfirmed) return;
-    await deleteService(service.id); // ← Firebase
+    await deleteService(service.id);
     setViewTarget(null);
     fetchServices();
   };
@@ -125,13 +130,15 @@ const AdminServices = () => {
 
       <div className="as-header">
         <div className="as-header__left">
-          <span className="as-header__icon">✂️</span>
+          <span className="as-header__icon"><FaCut size={18} /></span>
           <div>
             <h3 className="as-header__title">Services</h3>
             <p className="as-header__sub">{services.length} service{services.length !== 1 ? "s" : ""} available</p>
           </div>
         </div>
-        <button className="as-btn-add" onClick={openAdd}>+ Add Service</button>
+        <button className="as-btn-add" onClick={openAdd}>
+          <FaPlus size={12} style={{ marginRight: 6 }} /> Add Service
+        </button>
       </div>
 
       {loading ? (
@@ -141,7 +148,7 @@ const AdminServices = () => {
         </div>
       ) : services.length === 0 ? (
         <div className="as-empty">
-          <span className="as-empty__icon">🐾</span>
+          <span className="as-empty__icon"><FaPaw size={40} /></span>
           <p>No services yet. Add your first one!</p>
         </div>
       ) : (
@@ -162,9 +169,9 @@ const AdminServices = () => {
                 <p className="as-card__desc">{service.desc}</p>
               </div>
               <div className="as-card__footer">
-                <button className="as-btn-view"   onClick={() => openView(service)}>👁 View</button>
-                <button className="as-btn-edit"   onClick={() => openEdit(service)}>✏️ Edit</button>
-                <button className="as-btn-delete" onClick={() => handleDelete(service)}>🗑️</button>
+                <button className="as-btn-view"   onClick={() => openView(service)}><FaEye size={13} /> View</button>
+                <button className="as-btn-edit"   onClick={() => openEdit(service)}><FaEdit size={13} /> Edit</button>
+                <button className="as-btn-delete" onClick={() => handleDelete(service)}><FaTrash size={13} /></button>
               </div>
             </div>
           ))}
@@ -182,7 +189,9 @@ const AdminServices = () => {
                 className="as-view__hero-img"
                 onError={e => { e.target.src = "https://placehold.co/600x260?text=No+Image"; }}
               />
-              <button className="as-modal__close as-modal__close--hero" onClick={closeView}>✕</button>
+              <button className="as-modal__close as-modal__close--hero" onClick={closeView}>
+                <FaTimes size={14} />
+              </button>
               <div className="as-view__hero-price">₱{Number(viewTarget.price).toLocaleString()}</div>
             </div>
             <div className="as-view__body">
@@ -191,23 +200,23 @@ const AdminServices = () => {
               <div className="as-view__divider" />
               {viewTarget.fullDescription && (
                 <div className="as-view__section">
-                  <p className="as-view__section-label">📋 Full Description</p>
+                  <p className="as-view__section-label"><FaClipboardList size={13} style={{ marginRight: 6 }} />Full Description</p>
                   <p className="as-view__section-text">{viewTarget.fullDescription}</p>
                 </div>
               )}
               {viewTarget.hygieneIncludes?.length > 0 && (
                 <div className="as-view__section">
-                  <p className="as-view__section-label">🛁 What's Included</p>
+                  <p className="as-view__section-label"><FaBath size={13} style={{ marginRight: 6 }} />What's Included</p>
                   <ul className="as-view__list">
                     {viewTarget.hygieneIncludes.map((item, i) => (
-                      <li key={i} className="as-view__list-item">✓ {item}</li>
+                      <li key={i} className="as-view__list-item"><FaCheck size={11} style={{ marginRight: 5 }} />{item}</li>
                     ))}
                   </ul>
                 </div>
               )}
               {viewTarget.notes?.length > 0 && (
                 <div className="as-view__section">
-                  <p className="as-view__section-label">📝 Notes</p>
+                  <p className="as-view__section-label"><FaStickyNote size={13} style={{ marginRight: 6 }} />Notes</p>
                   <ul className="as-view__list as-view__list--notes">
                     {viewTarget.notes.map((note, i) => (
                       <li key={i} className="as-view__list-item">• {note}</li>
@@ -217,14 +226,18 @@ const AdminServices = () => {
               )}
               {viewTarget.cancellationPolicy && (
                 <div className="as-view__section">
-                  <p className="as-view__section-label">⚠️ Cancellation Policy</p>
+                  <p className="as-view__section-label"><FaExclamationTriangle size={13} style={{ marginRight: 6 }} />Cancellation Policy</p>
                   <p className="as-view__section-text as-view__section-text--policy">{viewTarget.cancellationPolicy}</p>
                 </div>
               )}
               <div className="as-view__actions">
                 <button className="as-btn-cancel-modal" onClick={closeView}>Close</button>
-                <button className="as-btn-edit as-btn-edit--lg" onClick={() => openEdit(viewTarget)}>✏️ Edit Service</button>
-                <button className="as-btn-delete as-btn-delete--lg" onClick={() => handleDelete(viewTarget)}>🗑️ Delete</button>
+                <button className="as-btn-edit as-btn-edit--lg" onClick={() => openEdit(viewTarget)}>
+                  <FaEdit size={13} /> Edit Service
+                </button>
+                <button className="as-btn-delete as-btn-delete--lg" onClick={() => handleDelete(viewTarget)}>
+                  <FaTrash size={13} /> Delete
+                </button>
               </div>
             </div>
           </div>
@@ -237,9 +250,12 @@ const AdminServices = () => {
           <div className="as-modal" onClick={e => e.stopPropagation()}>
             <div className="as-modal__header">
               <h4 className="as-modal__title">
-                {editTarget ? "✏️ Edit Service" : "➕ Add New Service"}
+                {editTarget
+                  ? <><FaEdit size={14} style={{ marginRight: 6 }} />Edit Service</>
+                  : <><FaPlus size={14} style={{ marginRight: 6 }} />Add New Service</>
+                }
               </h4>
-              <button className="as-modal__close" onClick={closeModal}>✕</button>
+              <button className="as-modal__close" onClick={closeModal}><FaTimes size={14} /></button>
             </div>
             <form className="as-modal__body" onSubmit={handleSubmit}>
               <div className="as-field">
