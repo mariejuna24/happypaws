@@ -27,6 +27,7 @@ import Contact from "./user/Contact";
 import ServiceDetailsPage from "./user/ServiceDetailPage";
 import BookingForm from "./user/BookingForm";
 import MyBookings from "./user/MyBookings";
+import UserManual from "./user/UserManual"
 
 import "./style/admin.css";
 
@@ -60,6 +61,7 @@ export default function App() {
       {/* PUBLIC AUTH */}
       <Route path="/login" element={<UserLogin />} />
       <Route path="/signup" element={<UserSignup />} />
+      <Route path="/user/manual" element={<UserManual />} />
       <Route path="/admin/login" element={<AdminLogin />} />
 
       {/* USER DASHBOARD */}
