@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-import { FaArrowLeft, FaPaw, FaFileDownload } from "react-icons/fa";
+import { FaArrowLeft, FaPaw, FaBookOpen } from "react-icons/fa";
 
 export default function UserLogin() {
   const [email, setEmail] = useState("");
@@ -117,21 +117,31 @@ export default function UserLogin() {
           </p>
         </form>
 
-        {/* 📄 User Manual Download */}
+        {/* 📖 User Manual Link */}
         <div className="text-center mt-3">
-          <a
-            href="/HappyPaws_User_Manual.docx"
-            download="HappyPaws_User_Manual.docx"
-            style={{ textDecoration: "none" }}
+          <Link
+            to="/user/manual"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "6px",
+              fontSize: "13px",
+              color: "#ff914d",
+              fontWeight: "600",
+              textDecoration: "none",
+              padding: "10px",
+              borderRadius: "10px",
+              border: "1px dashed #ffd4b3",
+              backgroundColor: "#fff8f4",
+              transition: "all 0.2s ease"
+            }}
+            onMouseEnter={e => e.currentTarget.style.backgroundColor = "#fff3ec"}
+            onMouseLeave={e => e.currentTarget.style.backgroundColor = "#fff8f4"}
           >
-            <button
-              className="btn btn-outline-secondary w-100 fw-semibold"
-              style={{ borderRadius: "10px", fontSize: "13px" }}
-            >
-              <FaFileDownload style={{ marginRight: "6px" }} />
-              Download User Manual
-            </button>
-          </a>
+            <FaBookOpen size={14} />
+            View User Manual
+          </Link>
         </div>
 
       </div>
