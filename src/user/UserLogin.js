@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
-import { FaArrowLeft, FaPaw, FaBookOpen } from "react-icons/fa";
+import { FaArrowLeft, FaPaw } from "react-icons/fa";
 
 export default function UserLogin() {
   const [email, setEmail] = useState("");
@@ -11,10 +11,12 @@ export default function UserLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     if (!email.trim() || !password.trim()) {
       alert("Please enter both email and password.");
       return;
     }
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -35,12 +37,21 @@ export default function UserLogin() {
   return (
     <div
       className="d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh", background: "linear-gradient(135deg, #fdf2e9, #ffe5d0)" }}
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(135deg, #fdf2e9, #ffe5d0)"
+      }}
     >
       <div
         className="card shadow-lg p-4 position-relative"
-        style={{ width: "100%", maxWidth: "420px", borderRadius: "20px", border: "none" }}
+        style={{
+          width: "100%",
+          maxWidth: "420px",
+          borderRadius: "20px",
+          border: "none"
+        }}
       >
+        {/* 🔙 Back Button */}
         <button
           className="btn btn-light position-absolute"
           style={{ top: "15px", left: "15px", borderRadius: "50%" }}
@@ -51,8 +62,12 @@ export default function UserLogin() {
 
         <div className="text-center mb-4 mt-2">
           <FaPaw size={32} color="#ff914d" />
-          <h3 className="fw-bold mt-2" style={{ color: "#ff914d" }}>Welcome Back</h3>
-          <p style={{ fontSize: "14px", color: "#777" }}>Login to continue booking services 🐾</p>
+          <h3 className="fw-bold mt-2" style={{ color: "#ff914d" }}>
+            Welcome Back
+          </h3>
+          <p style={{ fontSize: "14px", color: "#777" }}>
+            Login to continue booking services 🐾
+          </p>
         </div>
 
         <form onSubmit={handleLogin}>
@@ -68,6 +83,7 @@ export default function UserLogin() {
               required
             />
           </div>
+
           <div className="mb-3">
             <label className="form-label fw-semibold">Password</label>
             <input
@@ -80,13 +96,19 @@ export default function UserLogin() {
               required
             />
           </div>
+
           <button
             type="submit"
             className="btn w-100 mb-3 fw-semibold"
-            style={{ backgroundColor: "#ff914d", color: "white", borderRadius: "10px" }}
+            style={{
+              backgroundColor: "#ff914d",
+              color: "white",
+              borderRadius: "10px"
+            }}
           >
             Login
           </button>
+
           <p className="text-center mb-0" style={{ fontSize: "14px" }}>
             Don't have an account?{" "}
             <Link to="/signup" style={{ color: "#ff914d", fontWeight: "600" }}>
@@ -94,22 +116,6 @@ export default function UserLogin() {
             </Link>
           </p>
         </form>
-
-        {/* 📖 User Manual Link */}
-        <div className="text-center mt-3">
-          <Link
-            to="/user/manual"
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              gap: "6px", fontSize: "13px", color: "#ff914d", fontWeight: "600",
-              textDecoration: "none", padding: "10px", borderRadius: "10px",
-              border: "1px dashed #ffd4b3", backgroundColor: "#fff8f4"
-            }}
-          >
-            <FaBookOpen size={14} />
-            View User Manual
-          </Link>
-        </div>
 
       </div>
     </div>
